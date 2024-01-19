@@ -1,0 +1,319 @@
+													HANDS ON LAB 5
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+01. Push the Redis images tagged as version 1 and 3 to your Docker Hub repository, named "yourname_cloudethix_redis."
+Ans:
+
+docker login -u kamranshaikh111
+
+
+root@DESKTOP-Q1VPUEC:~# docker login -u kamranshaikh111
+Password:
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+root@DESKTOP-Q1VPUEC:~# docker image pull redis
+Using default tag: latest
+latest: Pulling from library/redis
+2f44b7a888fa: Already exists
+c55535369ffc: Already exists
+3622841bf0aa: Already exists
+91a62ca7377a: Already exists
+fdd219d1f4ab: Already exists
+fdf07fe2fb4c: Already exists
+4f4fb700ef54: Already exists
+fba604e70bfe: Already exists
+Digest: sha256:b5ddcd52d425a8e354696c022f392fe45fca928f68d6289e6bb4a709c3a74668
+Status: Downloaded newer image for redis:latest
+docker.io/library/redis:latest
+
+root@DESKTOP-Q1VPUEC:~# docker image tag redis:latest kamranshaikh111/kamran_cloudethix_redis:version3
+root@DESKTOP-Q1VPUEC:~# docker image tag redis:latest kamranshaikh111/kamran_cloudethix_redis:version1
+
+root@DESKTOP-Q1VPUEC:~# docker push kamranshaikh111/kamran_cloudethix_redis:version1
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_redis]
+cd02e5942a1e: Mounted from kamranshaikh111/redis
+5f70bf18a086: Mounted from kamranshaikh111/redis
+fcae66387b13: Mounted from kamranshaikh111/redis
+cbc573a5c422: Mounted from kamranshaikh111/redis
+116584210380: Mounted from kamranshaikh111/redis
+c95bcf9f626e: Mounted from kamranshaikh111/redis
+2361aeb2c69c: Mounted from kamranshaikh111/redis
+571ade696b26: Mounted from kamranshaikh111/redis
+version1: digest: sha256:5d5d31a84c7fec11a3c8a29b04b1712f650a98338f6a51152de42459ea24060b size: 1986
+root@DESKTOP-Q1VPUEC:~# docker push kamranshaikh111/kamran_cloudethix_redis:version3
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_redis]
+cd02e5942a1e: Layer already exists
+5f70bf18a086: Layer already exists
+fcae66387b13: Layer already exists
+cbc573a5c422: Layer already exists
+116584210380: Layer already exists
+c95bcf9f626e: Layer already exists
+2361aeb2c69c: Layer already exists
+571ade696b26: Layer already exists
+version3: digest: sha256:5d5d31a84c7fec11a3c8a29b04b1712f650a98338f6a51152de42459ea24060b size: 1986
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+02. Create a remote Git repository and add the Dockerfile and index.html files. Clone the repository locally and create a 
+release branch. 
+Build the Docker image from the release branch with a meaningful tag, then run a container from the image and expose it on 
+host port 8383. 
+Check the webpage in a browser, and upon success, push the image to your Docker Hub repository named "yourname_cloudethix_nginx." 
+Finally, push the release branch to the remote Git repository and merge it by creating a pull request.
+Ans:
+
+root@DESKTOP-Q1VPUEC:~# git clone git@github.com:kamranshaikh111/dock.git
+Cloning into 'dock'...
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 9 (delta 1), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (9/9), done.
+Resolving deltas: 100% (1/1), done.
+root@DESKTOP-Q1VPUEC:~# cd dock/
+root@DESKTOP-Q1VPUEC:dock# ll
+total 24
+drwxr-xr-x  3 root root 4096 Jan 17 19:54 ./
+drwx------ 16 root root 4096 Jan 17 19:54 ../
+drwxr-xr-x  8 root root 4096 Jan 17 19:54 .git/
+-rw-r--r--  1 root root   67 Jan 17 19:54 Dockerfile
+-rw-r--r--  1 root root   29 Jan 17 19:54 README.md
+-rw-r--r--  1 root root   19 Jan 17 19:54 index.html
+root@DESKTOP-Q1VPUEC:dock# git checkout -b release
+Switched to a new branch 'release'
+root@DESKTOP-Q1VPUEC:dock# docker build -t my_image:ngin .
+[+] Building 51.4s (8/8) FINISHED                                                                                                    docker:default
+ => [internal] load .dockerignore                                                                                                              0.9s
+root@DESKTOP-Q1VPUEC:dock# docker image ls
+REPOSITORY                                TAG        IMAGE ID       CREATED          SIZE
+my_image                                  ngin       0a9c78b547e1   12 seconds ago   187MB
+root@DESKTOP-Q1VPUEC:dock# docker container run -itd -p 8383:80 --name new-demo my_image:ngin
+5a59eb85282e20d4e9e85ff8e3b53b65ef3ddf8619faded9649294b7c6c1e1cf
+
+root@DESKTOP-Q1VPUEC:dock# docker container ls
+CONTAINER ID   IMAGE           COMMAND                  CREATED         STATUS         PORTS                                   NAMES
+5a59eb85282e   my_image:ngin   "/docker-entrypoint.…"   2 minutes ago   Up 2 minutes   0.0.0.0:8383->80/tcp, :::8383->80/tcp   new-demo
+root@DESKTOP-Q1VPUEC:dock# docker image ls
+REPOSITORY                                TAG        IMAGE ID       CREATED         SIZE
+my_image                                  ngin       0a9c78b547e1   7 minutes ago   187MB
+root@DESKTOP-Q1VPUEC:dock# docker image tag my_image:ngin kamranshaikh111/kamran_cloudethix_ngin:ngin
+root@DESKTOP-Q1VPUEC:dock# docker push kamranshaikh111/kamran_cloudethix_ngin:ngin
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_ngin]
+83bd7ec458a0: Pushed
+009507b85609: Mounted from library/nginx
+fbcc9bc44d3e: Mounted from library/nginx
+b4ad47845036: Mounted from library/nginx
+eddcd06e5ef9: Mounted from library/nginx
+b61d4b2cd2da: Mounted from library/nginx
+b6c2a8d6f0ac: Mounted from library/nginx
+571ade696b26: Mounted from kamranshaikh111/kamran_cloudethix_redis
+ngin: digest: sha256:26fd8b3c1cad513ae561e42caf6c1b685d97d2cb38878c04e8df8b83a4a9c4b8 size: 1985
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+03. Save all local Redis images as a .tar file in the master branch of your local repository. 
+Delete all Redis images from your local system and push the master branch to the remote repository. 
+Load the Redis images from the tar file to your local system, and verify that all images have been loaded correctly.
+Ans:
+
+root@DESKTOP-Q1VPUEC:dock# git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+
+root@DESKTOP-Q1VPUEC:dock# docker image save kamranshaikh111/kamran_cloudethix_redis:version1 -o redis.tar
+root@DESKTOP-Q1VPUEC:dock# docker image save kamranshaikh111/kamran_cloudethix_redis:version3 -o redis3.tar
+root@DESKTOP-Q1VPUEC:dock# ll
+total 277720
+drwxr-xr-x  3 root root      4096 Jan 17 20:16 ./
+drwx------ 16 root root      4096 Jan 17 20:14 ../
+drwxr-xr-x  8 root root      4096 Jan 17 20:14 .git/
+-rw-r--r--  1 root root        67 Jan 17 19:54 Dockerfile
+-rw-r--r--  1 root root        29 Jan 17 19:54 README.md
+-rw-r--r--  1 root root        19 Jan 17 19:54 index.html
+-rw-------  1 root root 142179328 Jan 17 20:15 redis.tar
+-rw-------  1 root root 142179328 Jan 17 20:16 redis3.tar
+
+root@DESKTOP-Q1VPUEC:dock# docker image rm kamranshaikh111/kamran_cloudethix_redis:version1
+Untagged: kamranshaikh111/kamran_cloudethix_redis:version1
+root@DESKTOP-Q1VPUEC:dock# docker image rm kamranshaikh111/kamran_cloudethix_redis:version3
+Untagged: kamranshaikh111/kamran_cloudethix_redis:version3
+Untagged: kamranshaikh111/kamran_cloudethix_redis@sha256:5d5d31a84c7fec11a3c8a29b04b1712f650a98338f6a51152de42459ea24060b
+root@DESKTOP-Q1VPUEC:dock# docker image ls
+REPOSITORY                               TAG       IMAGE ID       CREATED          SIZE
+kamranshaikh111/kamran_cloudethix_ngin   ngin      0a9c78b547e1   21 minutes ago   187MB
+my_image                                 ngin      0a9c78b547e1   21 minutes ago   187MB
+redis                                    latest    bdff4838c172   7 days ago       138MB
+
+root@DESKTOP-Q1VPUEC:dock# tar -cvzf redis.tar.bz2 redis1.tar redis3.tar
+redis1.tar
+redis3.tar
+root@DESKTOP-Q1VPUEC:dock# ll -h
+total 367M
+drwxr-xr-x  3 root root 4.0K Jan 19 11:43 ./
+drwx------ 16 root root 4.0K Jan 19 11:42 ../
+drwxr-xr-x  8 root root 4.0K Jan 19 11:41 .git/
+-rw-r--r--  1 root root   67 Jan 19 11:37 Dockerfile
+-rw-r--r--  1 root root   29 Jan 19 11:37 README.md
+-rw-r--r--  1 root root   19 Jan 19 11:37 index.html
+-rw-r--r--  1 root root  96M Jan 19 11:44 redis.tar.bz2
+-rw-------  1 root root 136M Jan 19 11:43 redis1.tar
+-rw-------  1 root root 136M Jan 19 11:42 redis3.tar
+root@DESKTOP-Q1VPUEC:dock# rm -rf redis1.tar redis3.tar
+root@DESKTOP-Q1VPUEC:dock#
+root@DESKTOP-Q1VPUEC:dock# git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        redis.tar.bz2
+
+nothing added to commit but untracked files present (use "git add" to track)
+root@DESKTOP-Q1VPUEC:dock# git add .
+root@DESKTOP-Q1VPUEC:dock# git commit -m "redis image backup"
+[master 494523d] redis image backup
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 redis.tar.bz2
+
+root@DESKTOP-Q1VPUEC:dock# git push origin master
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 94.90 MiB | 2.15 MiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+remote: warning: See https://gh.io/lfs for more information.
+remote: warning: File redis.tar.bz2 is 95.77 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+To github.com:kamranshaikh111/dock.git
+   77da6fd..494523d  master -> master
+
+root@DESKTOP-Q1VPUEC:dock# tar -xvf redis.tar.bz2
+redis1.tar
+redis3.tar
+root@DESKTOP-Q1VPUEC:dock# ll
+total 375792
+drwxr-xr-x  3 root root      4096 Jan 19 11:54 ./
+drwx------ 16 root root      4096 Jan 19 11:42 ../
+drwxr-xr-x  8 root root      4096 Jan 19 11:45 .git/
+-rw-r--r--  1 root root        67 Jan 19 11:37 Dockerfile
+-rw-r--r--  1 root root        29 Jan 19 11:37 README.md
+-rw-r--r--  1 root root        19 Jan 19 11:37 index.html
+-rw-r--r--  1 root root 100423903 Jan 19 11:44 redis.tar.bz2
+-rw-------  1 root root 142179328 Jan 19 11:43 redis1.tar
+-rw-------  1 root root 142179328 Jan 19 11:42 redis3.tar
+root@DESKTOP-Q1VPUEC:dock# docker image load -i redis1.tar
+Loaded image: kamranshaikh111/kamran_cloudethix_redis:version1
+root@DESKTOP-Q1VPUEC:dock# docker image load -i redis3.tar
+Loaded image: kamranshaikh111/kamran_cloudethix_redis:version3
+root@DESKTOP-Q1VPUEC:dock# docker images
+REPOSITORY                                TAG        IMAGE ID       CREATED        SIZE
+kamranshaikh111/kamran_cloudethix_ngin    ngin       0a9c78b547e1   40 hours ago   187MB
+my_image                                  ngin       0a9c78b547e1   40 hours ago   187MB
+kamranshaikh111/kamran_cloudethix_redis   version1   bdff4838c172   9 days ago     138MB
+kamranshaikh111/kamran_cloudethix_redis   version3   bdff4838c172   9 days ago     138MB
+redis                                     latest     bdff4838c172   9 days ago     138MB
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+04. Pull the Busy-box image to your local system, tag it, and push it to the Docker Hub repository "yourname_cloudethix_busybox." 
+Export the Docker image from the NGINX container, create a .tar file, and import the tar file to create a Docker image with a 
+meaningful name. 
+After importing the image, tag it and push it to the "yourname_cloudethix_busybox" Docker Hub repository.
+Ans:
+
+root@DESKTOP-Q1VPUEC:~# docker image pull busybox
+Using default tag: latest
+latest: Pulling from library/busybox
+9ad63333ebc9: Pull complete
+Digest: sha256:0d5085d6c05a37b52a42bd3d061b743a6b284f23a0deac169d97b5fe274e88b1
+Status: Downloaded newer image for busybox:latest
+docker.io/library/busybox:latest
+root@DESKTOP-Q1VPUEC:~# docker images
+REPOSITORY                                TAG        IMAGE ID       CREATED        SIZE
+busybox                                   latest     3f57d9401f8d   33 hours ago   4.26MB
+
+root@DESKTOP-Q1VPUEC:~# docker image tag busybox:latest  kamranshaikh111/kamran_cloudethix_busybox:v1
+
+root@DESKTOP-Q1VPUEC:~# docker images
+REPOSITORY                                  TAG        IMAGE ID       CREATED        SIZE
+kamranshaikh111/kamran_cloudethix_busybox   v1         3f57d9401f8d   33 hours ago   4.26MB
+busybox                                     latest     3f57d9401f8d   33 hours ago   4.26MB
+
+root@DESKTOP-Q1VPUEC:~# docker push kamranshaikh111/kamran_cloudethix_busybox:v1
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_busybox]
+2e112031b4b9: Mounted from library/busybox
+v1: digest: sha256:d319b0e3e1745e504544e931cde012fc5470eba649acc8a7b3607402942e5db7 size: 527
+
+root@DESKTOP-Q1VPUEC:~# docker save -o busybox.tar busybox:latest
+root@DESKTOP-Q1VPUEC:~# docker image load -i busybox.tar
+2e112031b4b9: Loading layer [==================================================>]  4.492MB/4.492MB
+Loaded image: busybox:latest
+root@DESKTOP-Q1VPUEC:~# docker image ls -a
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+busybox      latest    3f57d9401f8d   33 hours ago   4.26MB
+root@DESKTOP-Q1VPUEC:~# docker image tag busybox:latest  kamranshaikh111/kamran_cloudethix_busybox:v2
+root@DESKTOP-Q1VPUEC:~# docker push kamranshaikh111/kamran_cloudethix_busybox:v2
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_busybox]
+2e112031b4b9: Layer already exists
+v2: digest: sha256:d319b0e3e1745e504544e931cde012fc5470eba649acc8a7b3607402942e5db7 size: 527
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+05. Dockerfile creation: Create a simple Dockerfile to build a custom image with the following specifications:
+ 1. Base image: Ubuntu
+ 2. Install packages: curl, vim, and git
+ 3. Set an environment variable: MY_NAME=Your_Name
+ 4. Build the custom image using docker build and list all available images using docker images. 
+Ans:
+
+root@DESKTOP-Q1VPUEC:docker# vim dockerfile
+
+FROM ubuntu:latest
+RUN apt update
+RUN apt install curl -y
+RUN apt install vim -y
+RUN apt install git -y
+ENV MY_NAME=KAMRAN
+
+root@DESKTOP-Q1VPUEC:docker# docker build -t my_imag:ubuntu1 .
+[+] Building 195.4s (10/10) FINISHED                                                                                  docker:default
+ => [internal] load build definition from dockerfile                                                                            1.5s
+ => => transferring dockerfile: 162B                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                               1.3s
+ => => transferring context: 2B                                                                                                 0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                               26.6s
+ => [auth] library/ubuntu:pull token for registry-1.docker.io                                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest@sha256:e6173d4dc55e76b87c4af8db8821b1feae4146dd47341e4d431118c7dd060a74         13.0s
+ => => resolve docker.io/library/ubuntu:latest@sha256:e6173d4dc55e76b87c4af8db8821b1feae4146dd47341e4d431118c7dd060a74          0.5s
+ => => sha256:e6173d4dc55e76b87c4af8db8821b1feae4146dd47341e4d431118c7dd060a74 1.13kB / 1.13kB                                  0.0s
+ => => sha256:cb2af41f42b9c9bc9bcdc7cf1735e3c4b3d95b2137be86fd940373471a34c8b0 424B / 424B                                      0.0s
+ => => sha256:e34e831650c1bb0be9b6f61c6755749cb8ea2053ba91c6cda27fded9e089811f 2.30kB / 2.30kB                                  0.0s
+ => => sha256:29202e855b2021a2d7f92800619ed5f5e8ac402e267cfbb3d29a791feb13c1ee 29.55MB / 29.55MB                                4.4s
+ => => extracting sha256:29202e855b2021a2d7f92800619ed5f5e8ac402e267cfbb3d29a791feb13c1ee                                       5.9s
+ => [2/5] RUN apt update                                                                                                       16.2s
+ => [3/5] RUN apt install curl -y                                                                                              38.8s
+ => [4/5] RUN apt install vim -y                                                                                               35.9s
+ => [5/5] RUN apt install git -y                                                                                               58.3s
+ => exporting to image                                                                                                          3.3s
+ => => exporting layers                                                                                                         3.1s
+ => => writing image sha256:076442f0bbd70a808cc95b1621eed84a982633a496e19e9678fd794891c8bb5a                                    0.1s
+ => => naming to docker.io/library/my_imag:ubuntu1                                                                              0.2s
+root@DESKTOP-Q1VPUEC:docker# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+my_imag      ubuntu1   076442f0bbd7   19 seconds ago   261MB
+root@DESKTOP-Q1VPUEC:docker# docker container run -it --name dfile_container my_imag:ubuntu1
+root@450ddd2e5612:/# echo $MY_NAME
+KAMRAN
+
+-------------------------------------------------------------------------------------------------------------------------------
