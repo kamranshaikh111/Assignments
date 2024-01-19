@@ -1,0 +1,117 @@
+											 DOCKER Hands on Lab 04
+ 
+------------------------------------------------------------------------------------------------------------------------------
+1. Pull the Busy-box image to your local system, tag it, and push it to the Docker Hub repository "yourname_cloudethix_busybox.
+
+Ans:
+
+root@DESKTOP-Q1VPUEC:~# docker image pull busybox
+Using default tag: latest
+latest: Pulling from library/busybox
+9ad63333ebc9: Pull complete
+Digest: sha256:0d5085d6c05a37b52a42bd3d061b743a6b284f23a0deac169d97b5fe274e88b1
+Status: Downloaded newer image for busybox:latest
+docker.io/library/busybox:latest
+
+root@DESKTOP-Q1VPUEC:~# docker images
+REPOSITORY                                TAG        IMAGE ID       CREATED        SIZE
+busybox                                   latest     3f57d9401f8d   33 hours ago   4.26MB
+
+root@DESKTOP-Q1VPUEC:~# docker image tag busybox:latest  kamranshaikh111/kamran_cloudethix_busybox:v1
+
+root@DESKTOP-Q1VPUEC:~# docker images
+REPOSITORY                                  TAG        IMAGE ID       CREATED        SIZE
+kamranshaikh111/kamran_cloudethix_busybox   v1         3f57d9401f8d   33 hours ago   4.26MB
+busybox                                     latest     3f57d9401f8d   33 hours ago   4.26MB
+
+root@DESKTOP-Q1VPUEC:~# docker push kamranshaikh111/kamran_cloudethix_busybox:v1
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_busybox]
+2e112031b4b9: Mounted from library/busybox
+v1: digest: sha256:d319b0e3e1745e504544e931cde012fc5470eba649acc8a7b3607402942e5db7 size: 527
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+ 
+2. In your project directory, create a Dockerfile (named Dockerfile) with the following content.
+		FROM nginx:latest
+		COPY custom-index.html /usr/share/nginx/html/index.html
+	Ensure you also have a file named custom-index.html in the same directory.
+	Build the Docker image using the Dockerfile you created and push it your repository. 
+	Delete the local image.
+	Start a new container using the custom Nginx image that you just pushed.
+	Map port 8080 on your host to port 80 in the container. Check the container page in browser.
+ 
+Ans:
+
+root@DESKTOP-Q1VPUEC:docker# vim dockerfile
+root@DESKTOP-Q1VPUEC:docker# vim custom-index.html
+
+root@DESKTOP-Q1VPUEC:docker# cat dockerfile
+FROM nginx:latest
+COPY custom-index.html /usr/share/nginx/html/index.html
+
+root@DESKTOP-Q1VPUEC:docker# cat custom-index.html
+hello cloudethix this is Jr.Devops from CE03.
+
+root@DESKTOP-Q1VPUEC:docker# docker build -t my_image:ngin .
+[+] Building 41.7s (8/8) FINISHED                                                                                     docker:default
+ => [internal] load build definition from dockerfile                                                                            0.3s
+ => => transferring dockerfile: 111B                                                                                            0.0s
+ => [internal] load .dockerignore                                                                                               0.5s
+ => => transferring context: 2B                                                                                                 0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                                36.6s
+ => [auth] library/nginx:pull token for registry-1.docker.io                                                                    0.0s
+ => [internal] load build context                                                                                               0.7s
+ => => transferring context: 90B                                                                                                0.0s
+ => CACHED [1/2] FROM docker.io/library/nginx:latest@sha256:4c0fdaa8b6341bfdeca5f18f7837462c80cff90527ee35ef185571e1c327beac    0.0s
+ => [2/2] COPY custom-index.html /usr/share/nginx/html/index.html                                                               1.4s
+ => exporting to image                                                                                                          1.0s
+ => => exporting layers                                                                                                         0.8s
+ => => writing image sha256:2e5c1c2582549e0c6dd0bdfcc008ee3f127b3399469c20ef702d51e155cb1f86                                    0.1s
+ => => naming to docker.io/library/my_image:ngin                                                                                0.2s
+root@DESKTOP-Q1VPUEC:docker# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+my_image     ngin      2e5c1c258254   2 minutes ago    187MB
+
+root@DESKTOP-Q1VPUEC:docker# docker image tag my_image:ngin  kamranshaikh111/kamran_cloudethix_myngin:v1
+root@DESKTOP-Q1VPUEC:docker# docker push kamranshaikh111/kamran_cloudethix_myngin:v1
+The push refers to repository [docker.io/kamranshaikh111/kamran_cloudethix_myngin]
+f9e61e4ff8ce: Pushed
+009507b85609: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+fbcc9bc44d3e: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+b4ad47845036: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+eddcd06e5ef9: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+b61d4b2cd2da: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+b6c2a8d6f0ac: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+571ade696b26: Mounted from kamranshaikh111/kamran_cloudethix_ngin
+v1: digest: sha256:b37737b36d87a8a5f3f0c0c99359b3bd4efe8337c52ea3bf09ee2e1fe37f0b1f size: 1985
+
+root@DESKTOP-Q1VPUEC:docker# docker pull kamranshaikh111/kamran_cloudethix_myngin:v1
+v1: Pulling from kamranshaikh111/kamran_cloudethix_myngin
+2f44b7a888fa: Already exists
+8b7dd3ed1dc3: Already exists
+35497dd96569: Already exists
+36664b6ce66b: Already exists
+2d455521f76c: Already exists
+dc9c4fdb83d6: Already exists
+8056d2bcf3b6: Already exists
+1dd342f09cb8: Already exists
+Digest: sha256:b37737b36d87a8a5f3f0c0c99359b3bd4efe8337c52ea3bf09ee2e1fe37f0b1f
+Status: Downloaded newer image for kamranshaikh111/kamran_cloudethix_myngin:v1
+docker.io/kamranshaikh111/kamran_cloudethix_myngin:v1
+root@DESKTOP-Q1VPUEC:docker# docker images
+REPOSITORY                                 TAG       IMAGE ID       CREATED          SIZE
+kamranshaikh111/kamran_cloudethix_myngin   v1        2e5c1c258254   17 minutes ago   187MB
+root@DESKTOP-Q1VPUEC:docker# docker container run -itd -p 8080:80 --name my_container kamranshaikh111/kamran_cloudethix_myngin:v1
+02d945c902ddcac087c289725aac8c30ca56893b4e65735bfd7ecc8d50b3f68f
+root@DESKTOP-Q1VPUEC:docker# docker container ls
+CONTAINER ID   IMAGE                                         COMMAND                  CREATED          STATUS         PORTS                                   NAMES
+02d945c902dd   kamranshaikh111/kamran_cloudethix_myngin:v1   "/docker-entrypoint.…"   10 seconds ago   Up 7 seconds   0.0.0.0:8080->80/tcp, :::8080->80/tcp   my_container
+root@DESKTOP-Q1VPUEC:docker# docker inspect --format='{{.NetworkSettings.IPAddress}}' my_container
+172.17.0.2
+
+root@DESKTOP-Q1VPUEC:docker# curl 172.17.0.2
+hello cloudethix this is Jr.Devops from CE03.
+
+------------------------------------------------------------------------------------------------------------------------------
